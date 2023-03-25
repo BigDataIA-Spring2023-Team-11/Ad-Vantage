@@ -1,7 +1,7 @@
 import os
 import openai
 
-openai.api_key = "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"
+openai.api_key = ""
 
 
 
@@ -34,4 +34,15 @@ def keyword_generator(input_text):
   keywords = response.choices[0].text
   return keywords
 
-
+def product_name_generator(product_description, seed_words):
+  response = openai.Completion.create(
+    model="text-davinci-003",
+    prompt=f"Product description: {product_description}\nSeed words: {seed_words}",
+    temperature=0.8,
+    max_tokens=60,
+    top_p=1.0,
+    frequency_penalty=0.0,
+    presence_penalty=0.0
+  )
+  products_names = response.choices[0].text
+  return products_names
