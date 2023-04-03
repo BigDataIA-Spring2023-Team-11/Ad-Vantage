@@ -1,6 +1,6 @@
 import streamlit as st
 
-from api_main import get_grammer_corrected_text, keyword_generator, product_name_generator
+from api_main import get_grammer_corrected_text, keyword_generator, product_name_generator, get_answers
 
 st.markdown(
         "<h3 style='text-align: center'><span style='color: #2A76BE;'>AI Marketing Assistant</span></h3>",
@@ -17,3 +17,5 @@ st.markdown(keywords_from_description)
 
 product_names  = product_name_generator(product_description,keywords_from_description)
 st.markdown(product_names)
+ques1 = get_answers()
+st.markdown(ques1)
