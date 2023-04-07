@@ -41,9 +41,9 @@ def main():
 
 
     if st.button("Get Product Name!"):
-            st.markdown(f"{grammer_corrected_description}-------corrected")
+            # st.markdown(f"{grammer_corrected_description}-------corrected")
             generated_product_name = product_name_generator(grammer_corrected_description,adjective)
-            st.markdown(f"{generated_product_name}-------product_name")
+            # st.markdown(f"{generated_product_name}-------product_name")
     target_customer = st.text_input("Who is your target customer")
 
 
@@ -52,8 +52,8 @@ def main():
         ad_from_product_desc = ad_from_product_description(target_customer,grammer_corrected_description)
 
         st.session_state.ad = ad_from_product_desc
-        st.markdown(f"{grammer_corrected_description} ------> grammer corrected")
-        st.markdown(f"{ad_from_product_desc}----------ad_from_Desc")
+        # st.markdown(f"{grammer_corrected_description} ------> grammer corrected")
+        # st.markdown(f"{ad_from_product_desc}----------ad_from_Desc")
 
 
 
@@ -66,7 +66,7 @@ def main():
     if button_clicked:
         # Display spinner while image is being generated
         with st.spinner("Generating image..."):
-            advert_image = generate_image(grammer_corrected_description,chosen_title)
+            advert_image = generate_image(grammer_corrected_description,chosen_title.replace("_"," "))
 
         # If image is generated successfully, display it
         if advert_image is not None:
@@ -100,11 +100,10 @@ def main():
     with c2:
         if st.button('Download my website'):
             image_dir1 = get_s3_object_url(f"{chosen_title}.png")
-            st.markdown(st.session_state.ad)
-            generate_html(chosen_title, st.session_state.ad, image_dir1)
+            generate_html(chosen_title.replace("_"," "), st.session_state.ad, image_dir1)
             # Write the HTML to a file or display it in a Streamlit component
 
-            href = download_html(chosen_title,bucket_name)
+            href = download_html(chosen_title.replace("_"," "),bucket_name)
 
             st.markdown(href,unsafe_allow_html=True)
 
