@@ -4,8 +4,8 @@
 <ul>
 <li>💻 <a href="https://venkata-bhargavi-business-model-streamlitmain-d676xt.streamlit.app/">Streamlit</a> </li>
 <li>📖 <a href="https://codelabs-preview.appspot.com/?file_id=1FwxBVE3YF_8-AE0g1O3UfKNPyxfYuPyVxKGnisyTt2o#1">Codelab </a> </li>
-<li>   <a href="https://docs.google.com/presentation/d/1c-pNhkYG_HM5HLpZnDEXhlgYS45XaAOXT7CO0TmcHBE/edit?usp=sharing">Ppt </a> </li>
-<li>   <a href="https://www.youtube.com/watch?v=WSjhESHnB1E">Demo </a> </li>
+<li>✅ <a href="https://docs.google.com/presentation/d/1c-pNhkYG_HM5HLpZnDEXhlgYS45XaAOXT7CO0TmcHBE/edit?usp=sharing">Presentation Deck </a> </li>
+<li>🎦 <a href="https://www.youtube.com/watch?v=WSjhESHnB1E">Video Demo </a> </li>
 </ul>
 
 
@@ -39,7 +39,7 @@ The driving force behind the development of this application was to establish a 
 ## Architecture Diagram
 ![image](https://github.com/BigDataIA-Spring2023-Team-11/Ad-Vantage/blob/main/architecture_diagram/ad-vantage_architecture_diagram.png)
 
-
+## Steps to run the application
 ### Streamlit
 1. Open terminal
 2. Change to the location where you want to copy the repository
