@@ -53,7 +53,8 @@ def main():
 
         st.session_state.ad = ad_from_product_desc
         # st.markdown(f"{grammer_corrected_description} ------> grammer corrected")
-        # st.markdown(f"{ad_from_product_desc}----------ad_from_Desc")
+        with st.expander("Ad"):
+            st.write(f"{ad_from_product_desc}")
 
 
 
