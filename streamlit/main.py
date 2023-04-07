@@ -117,6 +117,17 @@ def main():
     st.markdown(
         "<h3 style='text-align: center'><span style='color: #2A76BE;'>Get started with a website for your product</span></h3>",
         unsafe_allow_html=True)
+    lottie_audio = load_lottieurl("https://assets6.lottiefiles.com/packages/lf20_hi95bvmx/WebdesignBg.json")
+    st_lottie(
+        lottie_audio,
+        speed=1,
+        reverse=False,
+        loop=True,
+        height="450px",
+        width=None,
+        key=None,
+    )
+
     c1,c2,c3 = st.columns([1,1,1])
     with c1:
         if st.button('Download my website'):
