@@ -204,7 +204,7 @@ def generate_html(chosen_title,product_description,image_dir):
     html = html_template.format(
         product_title=chosen_title,
         product_description=product_description,
-        image_path = f"{image_dir}{chosen_title}.png"
+        image_path = f"{image_dir}" #{chosen_title}.png
     )
     # Write the HTML to a file or display it in a Streamlit component
     # For example, to display it in Streamlit:

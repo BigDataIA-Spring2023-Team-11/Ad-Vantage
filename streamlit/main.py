@@ -86,7 +86,8 @@ def main():
     c1,c2,c3 = st.columns([1,1,1])
     with c2:
         if st.button('Download my website'):
-            generate_html(chosen_title, product_description, image_dir)
+            image_dir1 = get_s3_object_url(f"{chosen_title}.png")
+            generate_html(chosen_title, product_description, image_dir1)
             # Write the HTML to a file or display it in a Streamlit component
             # For example, to display it in Streamlit:
             with open(f'templates/{chosen_title}.html', 'r') as f:
