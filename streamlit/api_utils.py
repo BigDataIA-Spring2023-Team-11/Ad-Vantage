@@ -4,8 +4,10 @@ import random
 import boto3
 import openai
 import requests
+from botocore.exceptions import NoCredentialsError
 from dotenv import load_dotenv
 from PIL import Image
+import time
 
 load_dotenv()
 openai.api_key = os.environ.get("OPEN_API_ACCESS_KEY")
@@ -17,6 +19,13 @@ s3_resource = boto3.resource('s3',
                              region_name='us-east-1',
                              aws_access_key_id = os.environ.get('AWS_ACCESS_KEY'),
                              aws_secret_access_key = os.environ.get('AWS_SECRET_KEY'))
+
+
+s3_logs = boto3.client('logs',
+                        region_name='us-east-1',
+                        aws_access_key_id = os.environ.get('LOG_ACCESS_KEY'),
+                        aws_secret_access_key = os.environ.get('LOG_SECRET_KEY')
+                        )
 bucket_name = os.environ.get("SOURCE_BUCKET")
 def get_grammer_corrected_text(input_text):
   response = openai.Completion.create(
@@ -167,7 +176,7 @@ def generate_image(product_description,chosen_title):
              f"The image should also include {random_number()} {random_objects()} in the background to provide context. "
              f"The product should be shown in {random_angle()} angle and should have a {random_color()} color scheme. "
              f"The image should be {random_size()} in size and should have a {random_resolution()} resolution."
-             f"Do not include any text in advert image ",
+             f"Do not include any text in advert image or include the exact {chosen_title}",
       n=1,
       size="1024x1024",
       response_format="url"
@@ -193,9 +202,53 @@ def generate_image(product_description,chosen_title):
   except Exception as e:
     print(f"Error generating image: {str(e)}")
     return None
+#---------------------------------
 
 
-#-----------------------------------------------------------------------------------
+# # Define the HTML template with placeholders for the product title and description
+# if st.button("generate_html"):
+"""
+take title, product description and image directory as inputs
+and consumes html template from s3 bucket which can be modified if required
+and adds our product details to it, then uploads to a dir inour s3 bucket
+"""
+def generate_html(chosen_title,ad_from_api,image_dir):
+        # Read the HTML template from S3
+    html_template = read_html_template_from_s3("template")
+    # Replace the placeholders in the HTML template with the product title and description
+    html = html_template.format(
+        product_title=chosen_title,
+        product_description=ad_from_api,
+        image_path=f"{image_dir}"  # {chosen_title}.png
+    )
+    # Upload the HTML to S3
+    try:
+        # send_file_to_s3(f"generated_html/{chosen_title}.html", bucket_name, f"generated_html/{chosen_title}.html")
+        # s3_resource.put_object(Body=html, Bucket=bucket_name, Key=f"generate_html/{chosen_title}.html", ContentType='text/html')
+        s3.put_object(Body=html, Bucket=bucket_name, Key=f'generated_html_code/{chosen_title}.txt')
+        s3_resource.Bucket(bucket_name).put_object(Key=f'generated_html/{chosen_title}.html', Body=html)
+    except NoCredentialsError:
+        return "AWS credentials not available"
+
+    # Return the HTML
+    return html
+#-----------------------------------------
+
+"""
+gets .html file from s3 bucket and reads the content and create a hyper link to return 
+"""
+def download_html(chosen_title, bucket_name,folder,file_extension):
+    # Download the HTML file from S3
+    s3 = boto3.client('s3')
+    response = s3.get_object(Bucket=bucket_name, Key=f'{folder}/{chosen_title}.{file_extension}')
+    html_contents = response['Body'].read().decode('utf-8')
+
+    # Create a download link for the HTML file
+    b64 = base64.b64encode(html_contents.encode()).decode()
+    href = f'<a href="data:file/html;base64,{b64}" download="{chosen_title}.{file_extension}">Download file</a>'
+
+    return href
+#----------------------------------------------------------------------------
 def send_file_to_s3(file_path, s3_bucket, s3_key):
     """
     Uploads a file to S3
@@ -265,24 +318,20 @@ def get_answers():
 
 
 #-----------------------------------------------------------------
+"""
+writing logs to cloudwatch
+"""
 
-def generate_html(image_url, title, description):
-
-    prompt = (f"Please generate HTML code to display the following image:\n\n"
-              f"<img src='{image_url}' alt='{title}'>\n\n"
-              f"The title of the image is '{title}' and the description is:\n\n"
-              f"{description}\n\n"
-              f"Please generate the HTML code for displaying this image and its information on a website.")
-
-    response = openai.Completion.create(
-        engine="text-davinci-002",
-        prompt=prompt,
-        max_tokens=1024,
-        n=1,
-        stop=None,
-        temperature=0.5
-    )
-
-    html_code = response.choices[0].text.strip()
-
-    return html_code
+## commented the loggin part as the s3 bucket is full at the last moment
+def write_logs_to_cloudwatch(message: str, log_stream):
+    # s3_logs.put_log_events(
+    #     logGroupName = "model_as_a_service",
+    #     logStreamName = log_stream,
+    #     logEvents = [
+    #         {
+    #             'timestamp' : int(time.time() * 1e3),
+    #             'message' : message
+    #         }
+    #     ]
+    # )
+    return
