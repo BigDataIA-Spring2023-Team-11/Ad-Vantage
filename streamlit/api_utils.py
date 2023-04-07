@@ -167,7 +167,7 @@ def generate_image(product_description,chosen_title):
              f"The image should also include {random_number()} {random_objects()} in the background to provide context. "
              f"The product should be shown in {random_angle()} angle and should have a {random_color()} color scheme. "
              f"The image should be {random_size()} in size and should have a {random_resolution()} resolution."
-             f"Do not include any text in advert image ",
+             f"Do not include any text in advert image or include the exact {chosen_title}",
       n=1,
       size="1024x1024",
       response_format="url"
@@ -193,6 +193,26 @@ def generate_image(product_description,chosen_title):
   except Exception as e:
     print(f"Error generating image: {str(e)}")
     return None
+#---------------------------------
+
+
+# # Define the HTML template with placeholders for the product title and description
+# if st.button("generate_html"):
+def generate_html(chosen_title,product_description,image_dir):
+    html_template= read_html_template_from_s3("template")
+    # Replace the placeholders in the HTML template with the product title and description
+    html = html_template.format(
+        product_title=chosen_title,
+        product_description=product_description,
+        image_path = f"{image_dir}{chosen_title}.png"
+    )
+    # Write the HTML to a file or display it in a Streamlit component
+    # For example, to display it in Streamlit:
+    with open(f'templates/{chosen_title}.html', 'w') as f:
+        f.write(html)
+
+    # st.write(html, unsafe_allow_html=True)
+    return html
 
 
 #-----------------------------------------------------------------------------------
@@ -265,24 +285,3 @@ def get_answers():
 
 
 #-----------------------------------------------------------------
-
-def generate_html(image_url, title, description):
-
-    prompt = (f"Please generate HTML code to display the following image:\n\n"
-              f"<img src='{image_url}' alt='{title}'>\n\n"
-              f"The title of the image is '{title}' and the description is:\n\n"
-              f"{description}\n\n"
-              f"Please generate the HTML code for displaying this image and its information on a website.")
-
-    response = openai.Completion.create(
-        engine="text-davinci-002",
-        prompt=prompt,
-        max_tokens=1024,
-        n=1,
-        stop=None,
-        temperature=0.5
-    )
-
-    html_code = response.choices[0].text.strip()
-
-    return html_code
