@@ -11,11 +11,21 @@ from api_utils import get_grammer_corrected_text, product_name_generator, \
     download_html
 bucket_name = os.environ.get("SOURCE_BUCKET")
 
+
+
+
+
 with open('config.json', 'r') as f:
     config = json.load(f)
 image_dir = config['dir']['image']
 if 'image' not in st.session_state:
     st.session_state.image = None
+if "ad" not in st.session_state:
+    st.session_state.ad = None
+
+
+
+
 def main():
 
     st.markdown(
@@ -39,9 +49,11 @@ def main():
 
     # Add a button to generate the ad
     if st.button("Get Ad!"):
-            ad_from_product_desc = ad_from_product_description(target_customer,grammer_corrected_description)
-            st.markdown(f"{grammer_corrected_description} ------> grammer corrected")
-            st.markdown(f"{ad_from_product_desc}----------ad_from_Desc")
+        ad_from_product_desc = ad_from_product_description(target_customer,grammer_corrected_description)
+
+        st.session_state.ad = ad_from_product_desc
+        st.markdown(f"{grammer_corrected_description} ------> grammer corrected")
+        st.markdown(f"{ad_from_product_desc}----------ad_from_Desc")
 
 
 
@@ -88,7 +100,8 @@ def main():
     with c2:
         if st.button('Download my website'):
             image_dir1 = get_s3_object_url(f"{chosen_title}.png")
-            generate_html(chosen_title, product_description, image_dir1)
+            st.markdown(st.session_state.ad)
+            generate_html(chosen_title, st.session_state.ad, image_dir1)
             # Write the HTML to a file or display it in a Streamlit component
 
             href = download_html(chosen_title,bucket_name)

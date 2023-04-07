@@ -204,13 +204,13 @@ take title, product description and image directory as inputs
 and consumes html template from s3 bucket which can be modified if required
 and adds our product details to it, then uploads to a dir inour s3 bucket
 """
-def generate_html(chosen_title,product_description,image_dir):
+def generate_html(chosen_title,ad_from_api,image_dir):
         # Read the HTML template from S3
     html_template = read_html_template_from_s3("template")
     # Replace the placeholders in the HTML template with the product title and description
     html = html_template.format(
         product_title=chosen_title,
-        product_description=product_description,
+        product_description=ad_from_api,
         image_path=f"{image_dir}"  # {chosen_title}.png
     )
     # Upload the HTML to S3
@@ -226,7 +226,9 @@ def generate_html(chosen_title,product_description,image_dir):
     return html
 #-----------------------------------------
 
-
+"""
+gets .html file from s3 bucket and reads the content and create a hyper link to return 
+"""
 def download_html(chosen_title, bucket_name):
     # Download the HTML file from S3
     s3 = boto3.client('s3')
