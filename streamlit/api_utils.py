@@ -232,7 +232,7 @@ gets .html file from s3 bucket and reads the content and create a hyper link to 
 def download_html(chosen_title, bucket_name,folder,file_extension):
     # Download the HTML file from S3
     s3 = boto3.client('s3')
-    response = s3.get_object(Bucket=bucket_name, Key=f'{folder}/{chosen_title}.html')
+    response = s3.get_object(Bucket=bucket_name, Key=f'{folder}/{chosen_title}.{file_extension}')
     html_contents = response['Body'].read().decode('utf-8')
 
     # Create a download link for the HTML file
@@ -240,8 +240,7 @@ def download_html(chosen_title, bucket_name,folder,file_extension):
     href = f'<a href="data:file/html;base64,{b64}" download="{chosen_title}.{file_extension}">Download file</a>'
 
     return href
-
-#-----------------------------------------------------------------------------------
+#----------------------------------------------------------------------------
 def send_file_to_s3(file_path, s3_bucket, s3_key):
     """
     Uploads a file to S3
