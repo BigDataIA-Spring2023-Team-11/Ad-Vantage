@@ -3,12 +3,13 @@ import json
 import streamlit as st
 import base64
 # from streamlit import SessionState
+import os
 
 
-
-from api_utils import get_grammer_corrected_text, product_name_generator,\
-    ad_from_product_description, generate_image, get_s3_object_url, generate_html, read_html_template_from_s3
-
+from api_utils import get_grammer_corrected_text, product_name_generator, \
+    ad_from_product_description, generate_image, get_s3_object_url, generate_html, read_html_template_from_s3, \
+    download_html
+bucket_name = os.environ.get("SOURCE_BUCKET")
 
 with open('config.json', 'r') as f:
     config = json.load(f)
@@ -89,13 +90,11 @@ def main():
             image_dir1 = get_s3_object_url(f"{chosen_title}.png")
             generate_html(chosen_title, product_description, image_dir1)
             # Write the HTML to a file or display it in a Streamlit component
-            # For example, to display it in Streamlit:
-            with open(f'templates/{chosen_title}.html', 'r') as f:
-                file_contents = f.read()
-                b64 = base64.b64encode(file_contents.encode()).decode()
-                href = f'<a href="data:file/html;base64,{b64}" download="{chosen_title}.html">Download file</a>'
-                with st.expander("Expand for url"):
-                    st.write(href, unsafe_allow_html=True)
+
+            href = download_html(chosen_title,bucket_name)
+
+            with st.expander("Expand for url"):
+                st.write(href, unsafe_allow_html=True)
 
     #
     # if st.button("Get html code from api"):

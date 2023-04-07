@@ -4,6 +4,7 @@ import random
 import boto3
 import openai
 import requests
+from botocore.exceptions import NoCredentialsError
 from dotenv import load_dotenv
 from PIL import Image
 
@@ -199,21 +200,36 @@ def generate_image(product_description,chosen_title):
 # # Define the HTML template with placeholders for the product title and description
 # if st.button("generate_html"):
 def generate_html(chosen_title,product_description,image_dir):
-    html_template= read_html_template_from_s3("template")
+        # Read the HTML template from S3
+    html_template = read_html_template_from_s3("template")
     # Replace the placeholders in the HTML template with the product title and description
     html = html_template.format(
         product_title=chosen_title,
         product_description=product_description,
-        image_path = f"{image_dir}" #{chosen_title}.png
+        image_path=f"{image_dir}"  # {chosen_title}.png
     )
-    # Write the HTML to a file or display it in a Streamlit component
-    # For example, to display it in Streamlit:
-    with open(f'templates/{chosen_title}.html', 'w') as f:
-        f.write(html)
+    # Upload the HTML to S3
+    try:
+        s3_resource.Bucket(bucket_name).put_object(Key=f'generated_html/{chosen_title}.html', Body=html)
+    except NoCredentialsError:
+        return "AWS credentials not available"
 
-    # st.write(html, unsafe_allow_html=True)
+    # Return the HTML
     return html
+#-----------------------------------------
 
+
+def download_html(chosen_title, bucket_name):
+    # Download the HTML file from S3
+    s3 = boto3.client('s3')
+    response = s3.get_object(Bucket=bucket_name, Key=f'generated_html/{chosen_title}.html')
+    html_contents = response['Body'].read().decode('utf-8')
+
+    # Create a download link for the HTML file
+    b64 = base64.b64encode(html_contents.encode()).decode()
+    href = f'<a href="data:file/html;base64,{b64}" download="{chosen_title}.html">Download file</a>'
+
+    return href
 
 #-----------------------------------------------------------------------------------
 def send_file_to_s3(file_path, s3_bucket, s3_key):
