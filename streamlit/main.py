@@ -10,7 +10,8 @@ import os
 
 from api_utils import get_grammer_corrected_text, product_name_generator, \
     ad_from_product_description, generate_image, get_s3_object_url, generate_html, read_html_template_from_s3, \
-    download_html
+    download_html, write_logs_to_cloudwatch
+
 bucket_name = os.environ.get("SOURCE_BUCKET")
 
 
@@ -50,10 +51,14 @@ def main():
 
 
         if st.button("Get Product Name!"):
-                # st.markdown(f"{grammer_corrected_description}-------corrected")
-                generated_product_name = product_name_generator(grammer_corrected_description,adjective)
-                st.markdown(f"{generated_product_name}")
+            write_logs_to_cloudwatch(f"product description: {product_description}",
+                                     "advantage_logs")
+            # st.markdown(f"{grammer_corrected_description}-------corrected")
+            generated_product_name = product_name_generator(grammer_corrected_description,adjective)
+            st.markdown(f"{generated_product_name}")
         target_customer = st.text_input("Who is your target customer")
+        write_logs_to_cloudwatch(f"Target Customer: {target_customer}",
+                                 "advantage_logs")
 
 
         # Add a button to generate the ad
@@ -62,6 +67,8 @@ def main():
 
             st.session_state.ad = ad_from_product_desc
             # st.markdown(f"{grammer_corrected_description} ------> grammer corrected")
+            write_logs_to_cloudwatch(f"Generated Add: {ad_from_product_desc}",
+                                     "advantage_logs")
             with st.expander("Ad"):
                 st.write(f"{ad_from_product_desc}")
 
@@ -143,6 +150,8 @@ def main():
     with c3:
         if st.button('Download HTML Code'):
             href = download_html(chosen_title, bucket_name, "generated_html_code", "txt")
+            write_logs_to_cloudwatch(f"THtml code generated for {product_description}",
+                                     "advantage_logs")
 
             st.markdown(href, unsafe_allow_html=True)
     #

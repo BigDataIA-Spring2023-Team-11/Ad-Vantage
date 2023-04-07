@@ -7,6 +7,7 @@ import requests
 from botocore.exceptions import NoCredentialsError
 from dotenv import load_dotenv
 from PIL import Image
+import time
 
 load_dotenv()
 openai.api_key = os.environ.get("OPEN_API_ACCESS_KEY")
@@ -18,6 +19,13 @@ s3_resource = boto3.resource('s3',
                              region_name='us-east-1',
                              aws_access_key_id = os.environ.get('AWS_ACCESS_KEY'),
                              aws_secret_access_key = os.environ.get('AWS_SECRET_KEY'))
+
+
+s3_logs = boto3.client('logs',
+                        region_name='us-east-1',
+                        aws_access_key_id = os.environ.get('LOG_ACCESS_KEY'),
+                        aws_secret_access_key = os.environ.get('LOG_SECRET_KEY')
+                        )
 bucket_name = os.environ.get("SOURCE_BUCKET")
 def get_grammer_corrected_text(input_text):
   response = openai.Completion.create(
@@ -310,3 +318,20 @@ def get_answers():
 
 
 #-----------------------------------------------------------------
+"""
+writing logs to cloudwatch
+"""
+
+## commented the loggin part as the s3 bucket is full at the last moment
+def write_logs_to_cloudwatch(message: str, log_stream):
+    # s3_logs.put_log_events(
+    #     logGroupName = "model_as_a_service",
+    #     logStreamName = log_stream,
+    #     logEvents = [
+    #         {
+    #             'timestamp' : int(time.time() * 1e3),
+    #             'message' : message
+    #         }
+    #     ]
+    # )
+    return
