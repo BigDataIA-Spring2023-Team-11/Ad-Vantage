@@ -52,6 +52,7 @@ Source <Virtual_environment_name>/bin/activate
 ```commandline
 AWS_ACCESS_KEY =
 AWS_SECRET_KEY =
+OPEN_API_ACCESS_KEY =
 ```
 5. Install the requirements.txt
 ```commandline
