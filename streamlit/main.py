@@ -43,7 +43,7 @@ def main():
     if st.button("Get Product Name!"):
             # st.markdown(f"{grammer_corrected_description}-------corrected")
             generated_product_name = product_name_generator(grammer_corrected_description,adjective)
-            # st.markdown(f"{generated_product_name}-------product_name")
+            st.markdown(f"{generated_product_name}")
     target_customer = st.text_input("Who is your target customer")
 
 
