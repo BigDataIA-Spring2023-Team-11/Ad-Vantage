@@ -37,7 +37,7 @@ The driving force behind the development of this application was to establish a 
 
 
 ## Architecture Diagram
-![image](https://github.com/BigDataIA-Spring2023-Team-11/Assignment4/blob/main/architecture_diagram/final_cloud_architecture_diagram.png)
+![image](https://github.com/BigDataIA-Spring2023-Team-11/Ad-Vantage/blob/main/architecture_diagram/ad-vantage_architecture_diagram.png)
 
 
 ### Streamlit
