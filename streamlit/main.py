@@ -2,6 +2,8 @@ import json
 
 import streamlit as st
 import base64
+import requests
+from streamlit_lottie import st_lottie
 # from streamlit import SessionState
 import os
 
@@ -23,7 +25,14 @@ if 'image' not in st.session_state:
 if "ad" not in st.session_state:
     st.session_state.ad = None
 
-
+def load_lottiefile(filepath:str):
+    with open(filepath,"r") as f:
+        return json.load(f)
+def load_lottieurl(url:str):
+    r = requests.get(url)
+    if r.status_code !=200:
+        return None
+    return r.json()
 
 
 def main():
@@ -32,31 +41,42 @@ def main():
             "<h3 style='text-align: center'><span style='color: #2A76BE;'>AdVantage</span></h3>",
             unsafe_allow_html=True)
 
-
-
     product_description = st.text_input("product_description")
-    grammer_corrected_description = get_grammer_corrected_text(product_description)
-    adjective = st.text_input("Describe your product in a word or two separated by comma ','")
+    dec,img = st.columns([2,1])
+    with dec:
+        grammer_corrected_description = get_grammer_corrected_text(product_description)
+        adjective = st.text_input("Describe your product in a word or two separated by comma ','")
 
 
 
-    if st.button("Get Product Name!"):
-            # st.markdown(f"{grammer_corrected_description}-------corrected")
-            generated_product_name = product_name_generator(grammer_corrected_description,adjective)
-            st.markdown(f"{generated_product_name}")
-    target_customer = st.text_input("Who is your target customer")
+        if st.button("Get Product Name!"):
+                # st.markdown(f"{grammer_corrected_description}-------corrected")
+                generated_product_name = product_name_generator(grammer_corrected_description,adjective)
+                st.markdown(f"{generated_product_name}")
+        target_customer = st.text_input("Who is your target customer")
 
 
-    # Add a button to generate the ad
-    if st.button("Get Ad!"):
-        ad_from_product_desc = ad_from_product_description(target_customer,grammer_corrected_description)
+        # Add a button to generate the ad
+        if st.button("Get Ad!"):
+            ad_from_product_desc = ad_from_product_description(target_customer,grammer_corrected_description)
 
-        st.session_state.ad = ad_from_product_desc
-        # st.markdown(f"{grammer_corrected_description} ------> grammer corrected")
-        with st.expander("Ad"):
-            st.write(f"{ad_from_product_desc}")
+            st.session_state.ad = ad_from_product_desc
+            # st.markdown(f"{grammer_corrected_description} ------> grammer corrected")
+            with st.expander("Ad"):
+                st.write(f"{ad_from_product_desc}")
 
-
+    with img:
+        lottie_audio = load_lottieurl("https://assets10.lottiefiles.com/private_files/lf30_i0cTdc.json")
+        st_lottie(
+            lottie_audio,
+            speed=1,
+            reverse=False,
+            loop=True,
+            height="450px",
+            width=None,
+            key=None,
+        )
+    st.markdown("---------------------------------------------------------------------------------------------------------")
 
     # Add button to generate image
     chosen_title = st.text_input("Choose a title")
