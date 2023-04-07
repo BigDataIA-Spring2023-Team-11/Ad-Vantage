@@ -217,7 +217,7 @@ def generate_html(chosen_title,ad_from_api,image_dir):
     try:
         # send_file_to_s3(f"generated_html/{chosen_title}.html", bucket_name, f"generated_html/{chosen_title}.html")
         # s3_resource.put_object(Body=html, Bucket=bucket_name, Key=f"generate_html/{chosen_title}.html", ContentType='text/html')
-
+        s3.put_object(Body=html, Bucket=bucket_name, Key=f'generated_html_code/{chosen_title}.txt')
         s3_resource.Bucket(bucket_name).put_object(Key=f'generated_html/{chosen_title}.html', Body=html)
     except NoCredentialsError:
         return "AWS credentials not available"
@@ -229,15 +229,15 @@ def generate_html(chosen_title,ad_from_api,image_dir):
 """
 gets .html file from s3 bucket and reads the content and create a hyper link to return 
 """
-def download_html(chosen_title, bucket_name):
+def download_html(chosen_title, bucket_name,folder,file_extension):
     # Download the HTML file from S3
     s3 = boto3.client('s3')
-    response = s3.get_object(Bucket=bucket_name, Key=f'generated_html/{chosen_title}.html')
+    response = s3.get_object(Bucket=bucket_name, Key=f'{folder}/{chosen_title}.html')
     html_contents = response['Body'].read().decode('utf-8')
 
     # Create a download link for the HTML file
     b64 = base64.b64encode(html_contents.encode()).decode()
-    href = f'<a href="data:file/html;base64,{b64}" download="{chosen_title}.html">Download file</a>'
+    href = f'<a href="data:file/html;base64,{b64}" download="{chosen_title}.{file_extension}">Download file</a>'
 
     return href
 

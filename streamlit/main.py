@@ -98,16 +98,22 @@ def main():
         "<h3 style='text-align: center'><span style='color: #2A76BE;'>Get started with a website for your product</span></h3>",
         unsafe_allow_html=True)
     c1,c2,c3 = st.columns([1,1,1])
-    with c2:
+    with c1:
         if st.button('Download my website'):
             image_dir1 = get_s3_object_url(f"{chosen_title}.png")
             generate_html(chosen_title, st.session_state.ad, image_dir1)
+
             # Write the HTML to a file or display it in a Streamlit component
 
-            href = download_html(chosen_title,bucket_name)
+            href = download_html(chosen_title,bucket_name,"generated_html","html")
 
             st.markdown(href,unsafe_allow_html=True)
 
+    with c3:
+        if st.button('Download HTML Code'):
+            href = download_html(chosen_title, bucket_name, "generated_html_code", "txt")
+
+            st.markdown(href, unsafe_allow_html=True)
     #
     # if st.button("Get html code from api"):
     #     image_url = get_s3_object_url(f"{chosen_title}.png")
