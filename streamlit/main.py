@@ -93,8 +93,7 @@ def main():
 
             href = download_html(chosen_title,bucket_name)
 
-            with st.expander("Expand for url"):
-                st.write(href, unsafe_allow_html=True)
+            st.markdown(href,unsafe_allow_html=True)
 
     #
     # if st.button("Get html code from api"):

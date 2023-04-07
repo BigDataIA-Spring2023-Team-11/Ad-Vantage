@@ -199,6 +199,11 @@ def generate_image(product_description,chosen_title):
 
 # # Define the HTML template with placeholders for the product title and description
 # if st.button("generate_html"):
+"""
+take title, product description and image directory as inputs
+and consumes html template from s3 bucket which can be modified if required
+and adds our product details to it, then uploads to a dir inour s3 bucket
+"""
 def generate_html(chosen_title,product_description,image_dir):
         # Read the HTML template from S3
     html_template = read_html_template_from_s3("template")
@@ -210,6 +215,9 @@ def generate_html(chosen_title,product_description,image_dir):
     )
     # Upload the HTML to S3
     try:
+        # send_file_to_s3(f"generated_html/{chosen_title}.html", bucket_name, f"generated_html/{chosen_title}.html")
+        # s3_resource.put_object(Body=html, Bucket=bucket_name, Key=f"generate_html/{chosen_title}.html", ContentType='text/html')
+
         s3_resource.Bucket(bucket_name).put_object(Key=f'generated_html/{chosen_title}.html', Body=html)
     except NoCredentialsError:
         return "AWS credentials not available"
